@@ -30,7 +30,7 @@ db.connect((err) => {
 
 const PORT = 3001;
 app.get("/", (req,res) => {
-    res.send("serwer123 działa");
+    res.send("serwer działa");
 })
 
 app.listen(PORT, () => {
