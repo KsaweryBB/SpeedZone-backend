@@ -50,6 +50,20 @@ app.get("/oferta", (req,res) => {
     })
 })
 
+
+app.get("/oferta/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "SELECT * FROM oferta WHERE IDoferty = ?",
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result[0]);
+    }
+  );
+});
+
 app.get("/news", (req, res) => {
     const sql = "SELECT * FROM news"
 
