@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 app.use(cors());
+app.use(express.json());
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -52,34 +53,13 @@ app.get("/oferta/:id", (req, res) => {
   });
 });
 
-app.get("/oferta/:id", async (req, res) => {
-  const { id } = req.params;
-
-  const [rows] = await db.query(
-    "SELECT * FROM oferta WHERE IDoferty = ?",
-    [id]
-  );
-
-  if (!rows.length) {
-    return res.status(404).json({ message: "Nie znaleziono oferty" });
-  }
-
-  const oferta = rows[0];
-
-  res.json({
-    ...oferta,
-    images: oferta.image_path ? [oferta.image_path] : []
-  });
-});
-
-
 app.get("/news", (req, res) => {
   const sql = "SELECT * FROM news";
 
   db.query(sql, (err, results) => {
     if (err) {
       console.error(err);
-      res.status(500).send("bład bazy danych");
+      res.status(500).send("Błąd bazy danych");
       return;
     }
     res.json(results);
@@ -93,4 +73,60 @@ app.get("/news/:id", (req, res) => {
     if (err) return res.status(500).json(err);
     res.json(result[0]);
   });
+});
+
+app.post("/oferta", (req, res) => {
+  const {
+    marka,
+    model,
+    przebieg,
+    pojemnosc_skokowa,
+    moc,
+    cena,
+    image_path,
+    nadwozie,
+    skrzynia,
+    opis,
+    typ_silnika,
+    naped,
+    rok_produkcji,
+    stan,
+    negocjacja,
+    rodzaj_paliwa,
+  } = req.body;
+
+  const sql = `
+    INSERT INTO oferta
+    (marka, model, przebieg, pojemnosc_skokowa, moc, cena, image_path, nadwozie, skrzynia, opis, typ_silnika, naped, rok_produkcji, stan, negocjacja, rodzaj_paliwa)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [
+      marka,
+      model,
+      przebieg,
+      pojemnosc_skokowa,
+      moc,
+      cena,
+      image_path,
+      nadwozie,
+      skrzynia,
+      opis,
+      typ_silnika,
+      naped,
+      rok_produkcji,
+      stan,
+      negocjacja,
+      rodzaj_paliwa,
+    ],
+    (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json(err);
+      }
+      res.json({ message: "motocykl dodany" });
+    }
+  );
 });
