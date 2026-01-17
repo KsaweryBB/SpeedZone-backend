@@ -75,6 +75,28 @@ app.get("/news/:id", (req, res) => {
   });
 });
 
+app.get("/czesci", (req, res) => {
+  const sql = "SELECT * FROM czesci";
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Błąd bazy danych");
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get("/czesci/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query("SELECT * FROM czesci WHERE IDczesci = ?", [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result[0]);
+  });
+});
+
 app.post("/oferta", (req, res) => {
   const {
     marka,
